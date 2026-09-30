@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<base target="_blank">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Idiom Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="app">
+  <div class="top">
+    <h1>The Idiom Game</h1>
+    <div class="tools">
+      <div class="meter surface" id="meter" title="Your mood score. Hit 0 and you lose.">
+        <span class="face" id="face"></span>
+        <div class="bar" id="bar"></div>
+        <span class="num" id="num">50</span>
+      </div>
+      <button class="btn btn-small" id="bookbtn" type="button" aria-label="Open idiom scrapbook"><span id="bookico"></span><span id="bookcount">0</span></button>
+    </div>
+  </div>
+
+  <div class="stage" aria-hidden="true"><canvas id="scene"></canvas><div class="sun" id="sun">☀️</div><canvas id="hills"></canvas></div>
+
+  <section class="card surface" id="card" aria-live="polite"></section>
+
+  <footer class="foot surface">
+    <h2>Sources</h2>
+    <ul class="refs">
+      <li><a href="https://www.merriam-webster.com/">Merriam-Webster.com Dictionary</a>. Merriam-Webster.</li>
+      <li><a href="https://www.wikipedia.org/">Wikipedia</a>. Wikimedia Foundation.</li>
+      <li>Hendrickson, Robert. Encyclopedia of Word and Phrase Origins. Facts on File, 1997. Read as excerpts quoted at <a href="https://www.phrases.org.uk/">Phrase Finder</a>, not in the printed volume itself.</li>
+      <li><a href="https://www.oxfordlearnersdictionaries.com/">Oxford Learner's Dictionaries</a>. Oxford University Press.</li>
+      <li><a href="https://grammarphobia.com/">Grammarphobia</a>.</li>
+      <li><a href="https://www.vocabulary.com/">Vocabulary.com Dictionary</a>.</li>
+    </ul>
+    <p>Each idiom's card links to the exact entry. All web sources accessed September 29, 2026.</p>
+    <p>Made with the help of <a href="https://www.anthropic.com/claude">Claude</a>, an AI assistant from <a href="https://www.anthropic.com/">Anthropic</a>. It can make mistakes, so check the sources above before relying on a definition or origin.</p>
+  </footer>
+</main>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="sbtitle">
+  <div class="sheet">
+    <div class="sh-top">
+      <h2 id="sbtitle">Idiom scrapbook</h2>
+      <button class="btn" id="sbclose" type="button">Close</button>
+    </div>
+    <p class="sh-sub" id="sbsub"></p>
+    <div class="sb-grid" id="sbgrid"></div>
+    <button class="reset" id="sbreset" type="button">Reset scrapbook</button>
+  </div>
+</div>
+
+<script src="story.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

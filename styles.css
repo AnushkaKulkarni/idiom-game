@@ -1,0 +1,184 @@
+/* =====================================================================
+   1. THE PALETTE
+   Six colors draw the whole app (emoji are the one exception). JS swaps
+   them in eight steps as the sun sets: afternoon -> golden hour -> dusk.
+   The values below are the afternoon set.
+   ===================================================================== */
+:root{
+  --ink:#3b4a78; --paper:#fffaf0; --sky:#a7dcf5; --glow:#ffe08a; --far:#9ad8a8; --near:#6cc08c;
+
+  /* the pixel grid: every border, gap and step is a multiple of this */
+  --px:4px;   /* one pixel of movement */
+  --bw:3px;   /* border width */
+  --pxb:0 calc(var(--bw) * -1) 0 0 var(--ink), 0 var(--bw) 0 0 var(--ink), calc(var(--bw) * -1) 0 0 0 var(--ink), var(--bw) 0 0 0 var(--ink);
+  --pxs:0 -2px 0 0 var(--ink), 0 2px 0 0 var(--ink), -2px 0 0 0 var(--ink), 2px 0 0 0 var(--ink);
+  --gap:12px;
+
+  --head:'Pixelify Sans','Courier New',ui-monospace,monospace;      /* headings */
+  --body:'Pixelify Sans','Courier New',ui-monospace,monospace;      /* everything you read */
+
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+
+/* =====================================================================
+   2. BASE
+   ===================================================================== */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--sky);color:var(--ink);font:400 18px/1.5 var(--body);font-synthesis:none}
+button{font-family:inherit;color:inherit;border-radius:0}
+.app{max-width:680px;margin:0 auto;padding:22px 20px 44px}
+
+/* =====================================================================
+   3. SHARED PIECES  (square corners; a border is a pixel-notched box-shadow)
+   ===================================================================== */
+.surface{background:var(--paper);box-shadow:var(--pxb)}
+
+.btn{font:400 1.05rem var(--body);padding:8px 18px;background:var(--paper);color:var(--ink);border:0;border-radius:0;box-shadow:var(--pxb);cursor:pointer}
+@media (hover:hover){.btn:hover{background:var(--ink);color:var(--paper)}}
+.btn:focus-visible{outline:var(--bw) solid var(--near);outline-offset:var(--px)}
+.btn:active{transform:translateY(var(--px))}
+/* main action: a light key with a chunkier bottom edge, so it never looks like a mood chip */
+.btn-primary{box-shadow:var(--pxb),0 calc(var(--bw) * 2) 0 0 var(--ink);margin-bottom:var(--bw)}
+.btn-primary:active{box-shadow:var(--pxb)}
+.btn-small{padding:4px 12px;display:inline-flex;align-items:center;gap:8px}
+
+/* =====================================================================
+   4. ICONS  (emoji, sized per place)
+   ===================================================================== */
+.ico{display:inline-block;line-height:1;flex:none;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif}
+.ci .ico{font-size:3rem}
+.art .ico{font-size:4.4rem}
+.end .art .ico{font-size:3.6rem}
+.face .ico{font-size:1.5rem}
+.ri .ico{font-size:1.4rem}
+.sb .e .ico{font-size:2rem}
+#bookico .ico{font-size:1.2rem}
+
+/* =====================================================================
+   5. HEADER + MOOD METER  (ten pixel segments)
+   ===================================================================== */
+.top{display:flex;align-items:center;justify-content:space-between;gap:var(--gap);flex-wrap:wrap;margin-bottom:22px}
+h1{font:400 1.4rem/1 var(--head);margin:0;background:var(--glow);color:var(--ink);padding:10px 14px;box-shadow:var(--pxb)}
+.tools{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.meter{display:flex;align-items:center;gap:10px;padding:4px 12px 4px 8px}
+.face{display:block;line-height:1}
+.bar{display:flex;gap:3px}
+.bar i{display:block;width:8px;height:14px;background:var(--sky)}
+.bar i.on{background:var(--near)}
+.num{font:400 1rem var(--body);min-width:2.2ch;text-align:right}
+
+/* =====================================================================
+   6. SKY  (pixel sky and hills on low-res canvases; the sun is an emoji between them)
+   ===================================================================== */
+.stage{position:relative;height:clamp(150px,24vh,220px);overflow:hidden;box-shadow:var(--pxb);background:var(--sky);isolation:isolate}
+.stage canvas{position:absolute;left:0;bottom:0;image-rendering:crisp-edges;image-rendering:pixelated}
+.sun{position:absolute;left:0;top:0;line-height:1;font-size:clamp(3.6rem,10vh,5.2rem);font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif;will-change:transform}
+
+/* =====================================================================
+   7. CARD + CHOICES
+   ===================================================================== */
+.card{margin-top:24px;padding:22px 20px;min-height:250px}
+.prompt{font:400 1.3rem/1.5 var(--body);white-space:pre-line;margin:0 0 18px;min-height:3em;max-width:60ch}
+
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:14px 10px;visibility:hidden;opacity:0;transition:opacity .2s steps(3),visibility 0s .2s}
+.choices.show{visibility:visible;opacity:1;transition-delay:0s}
+.choice{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px 8px;background:none;border:0;border-radius:0;cursor:pointer;font:400 1.05rem var(--body);color:var(--ink)}
+.choice .ci{display:block}
+@media (hover:hover){.choice:hover{background:var(--glow);box-shadow:var(--pxb)}.choice:hover .ci{transform:translateY(calc(var(--px) * -1))}}
+.choice:focus-visible{background:var(--glow);box-shadow:var(--pxb);outline:none}
+.choice:active .ci{transform:translateY(var(--px))}
+
+.clouds{display:grid;grid-template-columns:repeat(5,1fr);gap:8px 6px}
+.cloudbtn{position:relative;border:0;background:none;cursor:pointer;padding:2px 0;display:grid;place-items:center}
+.cloudbtn .ico{font-size:clamp(2.6rem,11vw,3.6rem)}
+.cloudbtn:hover,.cloudbtn:focus-visible{background:var(--glow);box-shadow:var(--pxb);outline:none}
+.cn{position:absolute;inset:0;display:grid;place-items:center;font:400 clamp(1.05rem,4vw,1.35rem) var(--body);color:var(--ink);padding-top:6%}
+.cloudbtn.wrong{opacity:.3;pointer-events:none;animation:shake .3s steps(4)}
+.msg{min-height:1.5em;margin:12px 0 0;font-weight:400}
+
+.field{display:flex;gap:var(--gap);flex-wrap:wrap;visibility:hidden;opacity:0;transition:opacity .2s steps(3),visibility 0s .2s}
+.field.show{visibility:visible;opacity:1;transition-delay:0s}
+.field input{flex:1 1 180px;min-width:0;font:400 1.1rem var(--body);padding:10px 14px;border:0;border-radius:0;box-shadow:var(--pxb);background:var(--paper);color:var(--ink)}
+.field input:focus{outline:var(--px) solid var(--near);outline-offset:var(--px)}
+
+/* =====================================================================
+   8. REVEAL + ENDING
+   ===================================================================== */
+.reveal,.end{text-align:center}
+.art{display:inline-block;line-height:1;padding:6px 0 12px}
+.rtitle{font:400 1.5rem/1.2 var(--head);margin:6px 0 4px}
+.badge{display:inline-block;margin-left:10px;font:400 .85rem var(--body);background:var(--ink);color:var(--paper);padding:2px 10px;box-shadow:var(--pxs);vertical-align:middle;animation:pop-in .4s steps(4)}
+.say{font:400 1.25rem/1.5 var(--body);margin:8px auto 14px;max-width:52ch;white-space:pre-line;min-height:1.6em}
+.delta{display:inline-block;font:400 1rem var(--body);padding:2px 14px;margin-bottom:14px}
+/* gain = mint (the hills), loss = warm (the horizon glow): same roles all day, shades follow the palette */
+.delta.up{background:var(--far);color:var(--ink);box-shadow:var(--pxs)}
+.delta.down{background:var(--glow);color:var(--ink);box-shadow:var(--pxs)}
+/* reference text: definition, first recorded, origin, sources */
+.facts{text-align:left;max-width:54ch;margin:0 auto 16px;font-size:1rem;line-height:1.4}
+.fact{margin:0 0 6px}
+.lab{text-decoration:underline;text-underline-offset:3px}
+.cite{margin:8px 0 0;font-size:.9rem;line-height:1.35}
+.facts a,.foot a{color:var(--ink);text-underline-offset:2px}
+.facts a:focus-visible,.foot a:focus-visible{outline:var(--bw) solid var(--near);outline-offset:2px}
+.sb .facts{margin:6px 0 0}
+.foot{margin-top:28px;padding:14px 16px;font-size:.9rem;line-height:1.4}
+.foot h2{font:400 1.2rem/1.2 var(--head);margin:0 0 8px}
+.refs{margin:0 0 10px;padding-left:18px}
+.refs li{margin:0 0 8px}
+.foot p{margin:0}
+.foot p + p{margin-top:8px}
+.later{visibility:hidden;opacity:0;transition:opacity .2s steps(3),visibility 0s .2s}
+.later.show{visibility:visible;opacity:1;transition-delay:0s}
+
+.bedlead{margin-bottom:8px !important}
+.bed{margin:0 auto 18px;padding:14px 14px 4px;max-width:54ch;box-shadow:var(--pxs)}
+.bed .art .ico{font-size:2.8rem}
+.bed .say{margin:6px auto 10px;min-height:0}
+.end h2{font:400 1.5rem/1.2 var(--head);margin:4px 0 6px}
+.end .sub{margin:0 auto 12px;max-width:50ch}
+.recap{list-style:none;padding:0;margin:14px 0 20px;display:grid;gap:10px;text-align:left}
+.recap li{display:flex;align-items:center;gap:var(--gap);padding:6px 12px;font-weight:400;font-size:1rem;box-shadow:var(--pxs)}
+.recap .rt{flex:1}
+.recap .rd{font-weight:400;padding:0 8px;min-width:3.4ch;text-align:center}
+.recap .rd.up{background:var(--far)}
+.recap .rd.down{background:var(--glow)}
+.endbtns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+/* =====================================================================
+   9. SCRAPBOOK  (the backdrop is a dither, not a translucent fade)
+   ===================================================================== */
+.overlay{position:fixed;inset:0;z-index:50;display:none;align-items:flex-end;justify-content:center;background:conic-gradient(var(--ink) 25%,transparent 0 50%,var(--ink) 0 75%,transparent 0) 0 0/8px 8px;padding-top:env(safe-area-inset-top,0px)}
+.overlay.open{display:flex}
+.sheet{width:min(680px,calc(100% - 16px));max-height:88%;overflow:auto;background:var(--paper);box-shadow:var(--pxb);padding:18px 18px calc(26px + env(safe-area-inset-bottom,0px))}
+@media (min-width:720px){.overlay{align-items:center}.sheet{padding-bottom:22px}}
+.sh-top{display:flex;align-items:center;justify-content:space-between;gap:var(--gap);margin-bottom:6px}
+.sh-top h2{font:400 1.5rem var(--head);margin:0}
+.sh-sub{margin:0 0 18px;font-size:1rem}
+.sb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px 12px}
+.sb{padding:12px 10px;text-align:center;box-shadow:var(--pxs)}
+.sb .e{line-height:1;display:flex;justify-content:center;padding:4px 0 6px}
+.sb .t{font:400 1rem/1.25 var(--body);margin:4px 0 4px}
+.sb.locked{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:112px;padding-top:22px}
+.sb.locked::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:conic-gradient(var(--sky) 25%,var(--paper) 0 50%,var(--sky) 0 75%,var(--paper) 0) 0 0/8px 8px}
+.sb.locked .e{font:400 2rem/1.1 var(--body);display:block;padding:0}
+.reset{margin-top:18px;background:none;border:0;color:var(--ink);font:400 .95rem var(--body);text-decoration:underline;cursor:pointer}
+
+/* =====================================================================
+   10. MOTION  (everything moves in whole steps, like sprite frames)
+   ===================================================================== */
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@keyframes pop-in{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes fall{0%{transform:translateY(-48px)}100%{transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes bounce{0%{transform:scale(.4)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.meter.bump .face,.btn.bump{animation:pulse .4s steps(2)}
+.art.fall{animation:fall .6s steps(6)}
+.art.shake{animation:shake .5s steps(4)}
+.art.bounce{animation:bounce .5s steps(5)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
