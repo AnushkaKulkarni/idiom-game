@@ -8,6 +8,7 @@ A short choose-your-own-adventure game about a lazy day where every choice unloc
 It is based on a story I wrote in fourth grade, when I learned what idioms were (or at least, how to identify them). This version rebuilds that story as a small web game: you make choices, and each choice may turn into an idiom.
 
 ## How to play
+https://anushkakulkarni.github.io/idiom-game/
 
 - You start with a mood score of 50. Good and bad choices move it up and down. If it reaches 0, you lose.
 - Each idiom you unlock is added to your scrapbook. There are 23 in all, and you can't find them all in a single run, so try different choices. Find every one and you unlock a last idiom.
