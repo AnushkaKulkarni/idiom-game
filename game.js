@@ -189,7 +189,8 @@ function go(id){
   if (id === "lose") discover("rock");
   if (n.t !== undefined) S.t = n.t;
   updateSun();
-  if (n.kind === "numbers") renderNumbers(n);
+  if (n.kind === "multi") renderMulti(n);
+  else if (n.kind === "numbers") renderNumbers(n);
   else if (n.kind === "text") renderText(n);
   else if (n.kind === "end") renderEnd(n);
   else renderChoice(n);
@@ -211,7 +212,7 @@ function choose(c){
 function renderChoice(n){
   cancelTyper();
   const p = h("p", {class: "prompt"});
-  const grid = h("div", {class: "choices"});
+  const grid = h("div", {class: "choices" + (n.choices.length === 4 ? " four" : "")});
   n.choices.forEach(c => {
     grid.append(h("button", {class: "choice", type: "button", onclick: () => choose(c)},
       h("span", {class: "ci"}, ico(c.icon)), h("span", {}, val(c.label))));
@@ -236,6 +237,30 @@ function renderNumbers(n){
   }
   card.replaceChildren(p, grid, msg);
   typeInto(p, val(n.text), () => grid.classList.add("show"));
+}
+
+/* Tick any mix of options, then cook. The mix picks the outcome. */
+function renderMulti(n){
+  cancelTyper();
+  const p = h("p", {class: "prompt"});
+  const picked = new Set();
+  const cook = h("button", {class: "btn btn-primary", type: "button", disabled: ""}, n.cta);
+  const tiles = n.options.map(o => {
+    const b = h("button", {class: "choice", type: "button", "aria-pressed": "false"},
+      h("span", {class: "ci"}, ico(o.icon)), h("span", {}, o.label));
+    b.addEventListener("click", () => {
+      picked.has(o.key) ? picked.delete(o.key) : picked.add(o.key);
+      b.classList.toggle("on", picked.has(o.key));
+      b.setAttribute("aria-pressed", String(picked.has(o.key)));
+      cook.disabled = picked.size === 0;
+    });
+    return b;
+  });
+  cook.addEventListener("click", () => choose(n.outcomes[n.options.map(o => o.key).filter(k => picked.has(k)).join("+")]));
+  const grid = h("div", {class: "choices"}, tiles);
+  const row = h("div", {class: "later cook"}, cook);
+  card.replaceChildren(p, grid, row);
+  typeInto(p, val(n.text), () => { grid.classList.add("show"); row.classList.add("show"); });
 }
 
 function renderText(n){

@@ -11,7 +11,7 @@ It is based on a story I wrote in fourth grade, when I learned what idioms were 
 https://anushkakulkarni.github.io/idiom-game/
 
 - You start with a mood score of 50. Good and bad choices move it up and down. If it reaches 0, you lose.
-- Each idiom you unlock is added to your scrapbook. There are 23 in all, and you can't find them all in a single run, so try different choices. Find every one and you unlock a last idiom.
+- Each idiom you unlock is added to your scrapbook. There are 33 in all, and you can't find them all in a single run, so try different choices. Find every one and you unlock a last idiom.
 - The day ends at bedtime with a sleep idiom that depends on your final mood.
 - The scrapbook remembers what you have found, saved on your device's browser.
 

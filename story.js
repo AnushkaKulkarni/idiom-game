@@ -22,7 +22,7 @@ const EMOJI = {
   /* dog + street */
   dog:"🐕", bone:"🦴", coin:"🪙", bag:"💰", tree:"🌳", rock:"🪨",
   /* home */
-  bed:"🛏️", couch:"🛋️", zzz:"😴", think:"🤔", eyes:"👀", search:"🔎"
+  bed:"🛏️", couch:"🛋️", zzz:"😴", think:"🤔", eyes:"👀", search:"🔎", bacon:"🥓", potato:"🥔", carrot:"🥕", steak:"🥩", ribs:"🍖", stew:"🍲", gym:"🏋️", run:"🏃", muscle:"💪", weary:"😩", flag:"🏳️"
 };
 
 /* =====================================================================
@@ -35,7 +35,7 @@ const EMOJI = {
               hint                   scrapbook hint: which PART OF THE DAY, never the choice
               anim                   bounce | shake | fall
    NODES    every scene
-              kind     "choice" (default) | "text" (asks for a name) | "numbers" | "end" (the score, and on a win a sleep idiom picked from your final mood)
+              kind     "choice" (default) | "text" (asks for a name) | "multi" (tick any ingredients; the mix picks the outcome) | "numbers" | "end" (the score, and on a win a sleep idiom picked from your final mood)
               text     the prompt. {friend} and {dog} fill in the player's names
               t        how far through the day, 0 = afternoon start ... 5 = sundown (moves the sun)
               gate     if the score is 0 or less on arrival, jump to the lose screen
@@ -109,6 +109,44 @@ const IDIOMS = {
             origin:"An early reference appears in George Eliot's The Mill on the Floss (1860). The phrase was popularized by the 1946 mystery Murder in the Glass Room.",
             refs:[wiki("Don%27t_judge_a_book_by_its_cover")],
             hint:"Something from your reading time", anim:"bounce"},
+  raise:   {icon:"gym", title:"Raise the bar",
+            def:"To set a higher standard.",
+            refs:[mw("raise%20the%20bar")],
+            hint:"Something at the gym", anim:"bounce"},
+  mile:    {icon:"run", title:"Go the extra mile",
+            def:"To do more than is required.",
+            refs:[mw("go%20the%20extra%20mile")],
+            hint:"Something at the gym", anim:"bounce"},
+  weight:  {icon:"muscle", title:"Carry the weight of the world on your shoulders",
+            def:"To feel pressure from great responsibilities.",
+            refs:[mw("carry%20the%20weight%20of%20the%20world%20on%20one%27s%20shoulders")],
+            hint:"Something at the gym", anim:"shake"},
+  towel:   {icon:"flag", title:"Throw in the towel",
+            def:"To give up.",
+            refs:[["Merriam-Webster Thesaurus", "https://www.merriam-webster.com/thesaurus/throw%20in%20the%20towel"]],
+            hint:"Something at the gym", anim:"shake"},
+  small:   {icon:"potato", title:"Small potatoes",
+            def:"Something of trivial importance.",
+            first:"1831",
+            refs:[mw("small%20potato")],
+            hint:"Something at dinner", anim:"shake"},
+  veg:     {icon:"carrot", title:"Eat your vegetables",
+            def:"To eat healthy foods.",
+            refs:[["Merriam-Webster, nearest entry: \"eat right\"", "https://www.merriam-webster.com/dictionary/eat%20right"]],
+            hint:"Something at dinner", anim:"bounce"},
+  basic:   {icon:"steak", title:"Meat and potatoes",
+            def:"Basic and simple.",
+            first:"1846",
+            refs:[mw("meat-and-potatoes")],
+            hint:"Something at dinner", anim:"bounce"},
+  ribs:    {icon:"ribs", title:"Meat on the bone",
+            def:"Meat that is still attached to the bone.",
+            refs:[["Merriam-Webster, entry: \"on the bone\"", "https://www.merriam-webster.com/dictionary/on%20the%20bone"]],
+            hint:"Something at dinner", anim:"bounce"},
+  plate:   {icon:"stew", title:"Too much on your plate",
+            def:"Too many things to deal with at once.",
+            refs:[mw("on%20one%27s%20plate")],
+            hint:"Something at dinner", anim:"shake"},
   tree:    {icon:"tree", title:"Barking up the wrong tree",
             def:"To pursue a mistaken course.",
             first:"1826",
@@ -119,6 +157,10 @@ const IDIOMS = {
             first:"1649",
             refs:[mw("bite%20the%20hand%20that%20feeds%20one")],
             hint:"Something with your dog", anim:"shake"},
+  bacon:   {icon:"bacon", title:"Bring home the bacon",
+            def:"To earn the money needed to live.",
+            refs:[mw("bring%20home%20the%20bacon")],
+            hint:"Something at breakfast", anim:"bounce"},
   dime:    {icon:"coin", title:"A dime a dozen",
             def:"So common as to have little value.",
             first:"1919",
@@ -155,6 +197,13 @@ const IDIOMS = {
             hint:"Find every other idiom", anim:"bounce"}
 };
 
+/* Dinner outcomes. The ingredients picked are joined in this order: potatoes, meat, veg. */
+const STEW_SMALL = {icon:"potato", label:"Potatoes", idiom:"small", delta:-10, say:"A few little potatoes roll around your bowl. It isn't much of a stew.", next:"dogname"};
+const STEW_VEG   = {icon:"carrot", label:"Vegetables", idiom:"veg", delta:10, say:"A bowl of carrots and greens. It isn't exciting, but it's good for you.", next:"dogname"};
+const STEW_BASIC = {icon:"steak", label:"Meat and potatoes", idiom:"basic", delta:0, say:"Beef and potatoes in a plain broth. No surprises in your bowl.", next:"dogname"};
+const STEW_RIBS  = {icon:"ribs", label:"Meat", idiom:"ribs", delta:0, say:"One big bone with meat on it sits in your bowl. That's the whole stew.", next:"dogname"};
+const STEW_ALL   = {icon:"stew", label:"Everything", idiom:"plate", delta:-10, say:"You add everything, and now there's so much in your bowl that it spills over the rim.", next:"dogname"};
+
 const NODES = {
   start:{t:0,
     /* the only scene with logic: it greets returning players (see welcomeText) */
@@ -174,7 +223,8 @@ const NODES = {
     choices:[
       {icon:"milk",label:"Milk",next:"milk2"},
       {icon:"apple",label:"Apple",idiom:"apple",delta:10,say:"Great choice! You will stay in good health.",next:"weather"},
-      {icon:"egg",label:"Eggs",idiom:"egg",delta:-10,say:"Somehow the egg ended up on your forehead.",next:"weather"}]},
+      {icon:"egg",label:"Eggs",idiom:"egg",delta:-10,say:"Somehow the egg ended up on your forehead.",next:"weather"},
+      {icon:"bacon",label:"Bacon",idiom:"bacon",delta:10,say:"The smell fills the kitchen, and you feel ready to get to work.",next:"weather"}]},
   milk2:{
     text:"You drop your glass and feel a tear welling up. What do you do?",
     choices:[
@@ -206,9 +256,26 @@ const NODES = {
   reading:{t:3, gate:true,
     text:"The weather clears up, so you decide to enrich your mind. What do you read?",
     choices:[
-      {icon:"magnifier",label:"Mystery",idiom:"book",delta:0,say:"The cover was plain, but the story was great. I love mystery books!",next:"dogname"},
-      {icon:"letter",label:"Romance",idiom:"book",delta:0,say:"The cover was plain, but the story was great. I love romance books!",next:"dogname"},
-      {icon:"rocket",label:"Sci-fi",idiom:"book",delta:0,say:"The cover was plain, but the story was great. I love sci-fi books!",next:"dogname"}]},
+      {icon:"magnifier",label:"Mystery",idiom:"book",delta:0,say:"The cover was plain, but the story was great. I love mystery books!",next:"gym"},
+      {icon:"letter",label:"Romance",idiom:"book",delta:0,say:"The cover was plain, but the story was great. I love romance books!",next:"gym"},
+      {icon:"rocket",label:"Sci-fi",idiom:"book",delta:0,say:"The cover was plain, but the story was great. I love sci-fi books!",next:"gym"}]},
+  gym:{t:3.25,
+    text:"You head to the gym. What do you do?",
+    choices:[
+      {icon:"gym",label:"Bench press",idiom:"raise",delta:10,say:"You add a plate and press it clean. Tomorrow you'll try heavier.",next:"stew"},
+      {icon:"run",label:"Treadmill",idiom:"mile",delta:10,say:"You hit your personal record and kept going.",next:"stew"},
+      {icon:"muscle",label:"Weight lifting",idiom:"weight",delta:0,say:"You settle a heavy bar across your back. Things feel heavy.",next:"stew"},
+      {icon:"weary",label:"I don't want to",idiom:"towel",delta:-10,say:"You skip the workout and head home. The couch has been waiting.",next:"stew"}]},
+  stew:{t:3.5, kind:"multi",
+    text:"You want to make a stew for dinner. What do you put in it?\n(Pick as many as you like.)",
+    options:[{key:"potatoes", icon:"potato", label:"Potatoes"}, {key:"meat", icon:"steak", label:"Meat"}, {key:"veg", icon:"carrot", label:"Vegetables"}],
+    cta:"Cook the stew",
+    outcomes:{
+      "potatoes": STEW_SMALL,
+      "veg": STEW_VEG, "potatoes+veg": STEW_VEG,
+      "meat": STEW_RIBS, "meat+veg": STEW_RIBS,
+      "potatoes+meat": STEW_BASIC,
+      "potatoes+meat+veg": STEW_ALL}},
   dogname:{t:4, kind:"text", key:"dog", def:"Biscuit", placeholder:"Biscuit", next:"dog",
     text:"It's time for an evening walk! You decide to bring your dog.\nHey, I forgot: what's your dog's name again?"},
   dog:{

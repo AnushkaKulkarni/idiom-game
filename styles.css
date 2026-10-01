@@ -85,6 +85,9 @@ h1{font:400 1.4rem/1 var(--head);margin:0;background:var(--glow);color:var(--ink
 .prompt{font:400 1.3rem/1.5 var(--body);white-space:pre-line;margin:0 0 18px;min-height:3em;max-width:60ch}
 
 .choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:14px 10px;visibility:hidden;opacity:0;transition:opacity .2s steps(3),visibility 0s .2s}
+.choice.on{background:var(--glow);box-shadow:var(--pxb)}
+.cook{margin-top:16px;text-align:center}
+.choices.four{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
 .choices.show{visibility:visible;opacity:1;transition-delay:0s}
 .choice{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px 8px;background:none;border:0;border-radius:0;cursor:pointer;font:400 1.05rem var(--body);color:var(--ink)}
 .choice .ci{display:block}
