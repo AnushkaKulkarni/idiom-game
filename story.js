@@ -224,7 +224,7 @@ const NODES = {
       {icon:"milk",label:"Milk",next:"milk2"},
       {icon:"apple",label:"Apple",idiom:"apple",delta:10,say:"Great choice! You will stay in good health.",next:"weather"},
       {icon:"egg",label:"Eggs",idiom:"egg",delta:-10,say:"Somehow the egg ended up on your forehead.",next:"weather"},
-      {icon:"bacon",label:"Bacon",idiom:"bacon",delta:10,say:"The smell fills the kitchen, and you feel ready to get to work.",next:"weather"}]},
+      {icon:"bacon",label:"Turkey bacon",idiom:"bacon",delta:10,say:"The smell fills the kitchen, and you feel ready to get to work.",next:"weather"}]},
   milk2:{
     text:"You drop your glass and feel a tear welling up. What do you do?",
     choices:[
