@@ -198,11 +198,11 @@ const IDIOMS = {
 };
 
 /* Dinner outcomes. The ingredients picked are joined in this order: potatoes, meat, veg. */
-const STEW_SMALL = {icon:"potato", label:"Potatoes", idiom:"small", delta:-10, say:"A few little potatoes roll around your bowl. It isn't much of a stew.", next:"dogname"};
-const STEW_VEG   = {icon:"carrot", label:"Vegetables", idiom:"veg", delta:10, say:"A bowl of carrots and greens. It isn't exciting, but it's good for you.", next:"dogname"};
-const STEW_BASIC = {icon:"steak", label:"Meat and potatoes", idiom:"basic", delta:0, say:"Beef and potatoes in a plain broth. No surprises in your bowl.", next:"dogname"};
-const STEW_RIBS  = {icon:"ribs", label:"Meat", idiom:"ribs", delta:0, say:"One big bone with meat on it sits in your bowl. That's the whole stew.", next:"dogname"};
-const STEW_ALL   = {icon:"stew", label:"Everything", idiom:"plate", delta:-10, say:"You add everything, and now there's so much in your bowl that it spills over the rim.", next:"dogname"};
+const STEW_SMALL = {icon:"potato", label:"Potatoes", idiom:"small", delta:-10, say:"A few little potatoes roll around your bowl. It isn't much of a stew.", next:"end"};
+const STEW_VEG   = {icon:"carrot", label:"Vegetables", idiom:"veg", delta:10, say:"A bowl of carrots and greens. It isn't exciting, but it's good for you.", next:"end"};
+const STEW_BASIC = {icon:"steak", label:"Meat and potatoes", idiom:"basic", delta:0, say:"Beef and potatoes in a plain broth. No surprises in your bowl.", next:"end"};
+const STEW_RIBS  = {icon:"ribs", label:"Meat", idiom:"ribs", delta:0, say:"One big bone with meat on it sits in your bowl. That's the whole stew.", next:"end"};
+const STEW_ALL   = {icon:"stew", label:"Everything", idiom:"plate", delta:-10, say:"You add everything, and now there's so much in your bowl that it spills over the rim.", next:"end"};
 
 const NODES = {
   start:{t:0,
@@ -262,11 +262,11 @@ const NODES = {
   gym:{t:3.25,
     text:"You head to the gym. What do you do?",
     choices:[
-      {icon:"gym",label:"Bench press",idiom:"raise",delta:10,say:"You add a plate and press it clean. Tomorrow you'll try heavier.",next:"stew"},
-      {icon:"run",label:"Treadmill",idiom:"mile",delta:10,say:"You hit your personal record and kept going.",next:"stew"},
-      {icon:"muscle",label:"Weight lifting",idiom:"weight",delta:0,say:"You settle a heavy bar across your back. Things feel heavy.",next:"stew"},
-      {icon:"weary",label:"I don't want to",idiom:"towel",delta:-10,say:"You skip the workout and head home. The couch has been waiting.",next:"stew"}]},
-  stew:{t:3.5, kind:"multi",
+      {icon:"gym",label:"Bench press",idiom:"raise",delta:10,say:"You add a plate and press it clean. Tomorrow you'll try heavier.",next:"dogname"},
+      {icon:"run",label:"Treadmill",idiom:"mile",delta:10,say:"You hit your personal record and kept going.",next:"dogname"},
+      {icon:"muscle",label:"Weight lifting",idiom:"weight",delta:0,say:"You settle a heavy bar across your back. Things feel heavy.",next:"dogname"},
+      {icon:"weary",label:"I don't want to",idiom:"towel",delta:-10,say:"You skip the workout and head home. The couch has been waiting.",next:"dogname"}]},
+  stew:{t:4.5, gate:true, kind:"multi",
     text:"You want to make a stew for dinner. What do you put in it?\n(Pick as many as you like.)",
     options:[{key:"potatoes", icon:"potato", label:"Potatoes"}, {key:"meat", icon:"steak", label:"Meat"}, {key:"veg", icon:"carrot", label:"Vegetables"}],
     cta:"Cook the stew",
@@ -282,18 +282,18 @@ const NODES = {
     text:"{dog} is bored. What do you do?",
     choices:[
       {icon:"dog",label:"Let {dog} lead",idiom:"tree",delta:-20,say:"Oh no! {dog} could not stop running off the sidewalk. Fellow dogwalkers are mad.",next:"coin"},
-      {icon:"bone",label:"Give a bone",idiom:"hand",delta:-20,say:"Oh no! {dog} took the bone and nipped your hand too. That's no way to say thanks!",next:"end"},
+      {icon:"bone",label:"Give a bone",idiom:"hand",delta:-20,say:"Oh no! {dog} took the bone and nipped your hand too. That's no way to say thanks!",next:"stew"},
       {icon:"tennis",label:"Play fetch",next:"fetch"}]},
   coin:{
     text:"You see a coin on the street. What do you do?",
     choices:[
-      {icon:"away",label:"Ignore it",idiom:"dime",delta:10,say:"Coins are everywhere anyway! You'd rather have the good karma.",next:"end"},
-      {icon:"coin",label:"Pick it up",idiom:"penny",delta:10,say:"You pocket it. Every little bit counts.",next:"end"}]},
+      {icon:"away",label:"Ignore it",idiom:"dime",delta:10,say:"Coins are everywhere anyway! You'd rather have the good karma.",next:"stew"},
+      {icon:"coin",label:"Pick it up",idiom:"penny",delta:10,say:"You pocket it. Every little bit counts.",next:"stew"}]},
   fetch:{
     text:"{dog} caught the ball and is watching you, tail wagging. Do you want to win or lose points?",
     choices:[
-      {icon:"trophy",label:"Win points",idiom:"court",delta:10,say:"It was your move, and you played it well.",next:"end"},
-      {icon:"down",label:"Lose points",idiom:"court",delta:-10,say:"It was your move, and you dropped it on purpose. Bold.",next:"end"}]},
+      {icon:"trophy",label:"Win points",idiom:"court",delta:10,say:"It was your move, and you played it well.",next:"stew"},
+      {icon:"down",label:"Lose points",idiom:"court",delta:-10,say:"It was your move, and you dropped it on purpose. Bold.",next:"stew"}]},
 
   end:{t:5, gate:true, kind:"end"},
   lose:{kind:"end", lose:true}
