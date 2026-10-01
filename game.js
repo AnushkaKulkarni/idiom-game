@@ -17,6 +17,7 @@ const S = {score:50, hist:[], found:new Set(), friend:"", dog:"", t:0};
 const KEY = "idiom-game-scrapbook-v1";
 let BOOK = {};
 try { BOOK = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { BOOK = {}; }
+for (const k of Object.keys(BOOK)) if (!(k in IDIOMS)) delete BOOK[k];   /* an idiom that was removed or replaced no longer counts */
 function saveBook(){ try { localStorage.setItem(KEY, JSON.stringify(BOOK)); } catch (e) {} }
 const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -176,7 +177,7 @@ function updateMeter(){
   Array.from(bar.children).forEach((el, i) => el.classList.toggle("on", i < on));
 }
 function pulse(el){ el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
-function bump(d){ S.score += d; updateMeter(); pulse($("meter")); }
+function bump(d){ S.score = Math.min(100, S.score + d); updateMeter(); pulse($("meter")); }
 function updateBookBtn(){ $("bookcount").textContent = Object.keys(BOOK).length + "/" + IDIOM_IDS.length; }
 
 /* =====================================================================

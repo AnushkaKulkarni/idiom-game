@@ -114,10 +114,10 @@ const IDIOMS = {
             first:"1826",
             refs:[mw("bark%20up%20the%20wrong%20tree")],
             hint:"Something with your dog", anim:"shake"},
-  chew:    {icon:"bone", title:"Bite off more than you can chew",
-            def:"To take on more than you can handle.",
-            first:"1877",
-            refs:[mw("bite%20off%20more%20than%20one%20can%20chew")],
+  hand:    {icon:"bone", title:"Bite the hand that feeds you",
+            def:"To harm someone who supports you.",
+            first:"1649",
+            refs:[mw("bite%20the%20hand%20that%20feeds%20one")],
             hint:"Something with your dog", anim:"shake"},
   dime:    {icon:"coin", title:"A dime a dozen",
             def:"So common as to have little value.",
@@ -189,7 +189,7 @@ const NODES = {
   storm:{
     text:"The weather makes you remember a psychic you ran into.\nShe said something about a pathetic fallacy...\nHow did you respond?",
     choices:[
-      {icon:"ball",label:"With interest",idiom:"weather",delta:10,say:"She wished you well. The day goes fine from there.",next:"reading"},
+      {icon:"ball",label:"With interest",idiom:"weather",delta:10,say:"She wished you well. That's a good omen for the day.",next:"reading"},
       {icon:"roll",label:"With sarcasm",idiom:"perfect",delta:-50,say:"She cursed you! You have a terrible day and can only sigh.",next:"reading"},
       {icon:"scared",label:"With fear",idiom:"calm",delta:0,say:"You're still nervous about her. You can't help but feel something worse is coming.",next:"reading"}]},
   cloud:{kind:"numbers", answer:9, text:"Pick a number from 1 to 10.",
@@ -215,7 +215,7 @@ const NODES = {
     text:"{dog} is bored. What do you do?",
     choices:[
       {icon:"dog",label:"Let {dog} lead",idiom:"tree",delta:-20,say:"Oh no! {dog} could not stop running off the sidewalk. Fellow dogwalkers are mad.",next:"coin"},
-      {icon:"bone",label:"Give a bone",idiom:"chew",delta:-20,say:"Oh no! {dog} tried to eat the whole bone in one go! I hope {dog} is okay!",next:"end"},
+      {icon:"bone",label:"Give a bone",idiom:"hand",delta:-20,say:"Oh no! {dog} took the bone and nipped your hand too. That's no way to say thanks!",next:"end"},
       {icon:"tennis",label:"Play fetch",next:"fetch"}]},
   coin:{
     text:"You see a coin on the street. What do you do?",
